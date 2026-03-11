@@ -1,0 +1,28 @@
+[package]
+name = "gaia_recs"
+version = "0.1.0"
+description = "Gaia Renewable Energy Credits on Solana"
+edition = "2021"
+
+[features]
+no-entrypoint = []
+no-idl = []
+cpi = ["no-entrypoint"]
+default = []
+
+[dependencies]
+anchor-lang = "0.32.1"
+anchor-spl = { version = "0.32.0", features = ["token-2022"] }
+spl-token-2022 = "0.6.0"
+
+[dev-dependencies]
+anchor-spl = { version = "0.32.0", features = ["token-2022"] }
+anchor-lang = { version = "0.32.1", features = ["dev"] }
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "gaia_recs"
+
+[[bin]]
+name = "gaia_recs"
+path = "src/lib.rs"

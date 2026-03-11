@@ -1,0 +1,129 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Modelo de dispositivo de energía renovable
+model Device {
+  id           String   @id @default(cuid())
+  deviceId     String   @unique
+  ownerWallet  String
+  deviceType   String
+  capacityKw   Float
+  location     String
+  blockchainId String   @unique // Referencia a la cuenta Solana PDA
+  isVerified   Boolean  @default(false)
+  verificationDate DateTime?
+  registrationDate DateTime @default(now())
+  
+  // Relaciones
+  energyReports EnergyReport[]
+  recs          RECertificate[]
+  
+  // Campos calculados (se actualizan desde blockchain)
+  totalEnergyWh   BigInt  @default(0)
+  energyAccumulator BigInt @default(0)
+  totalRecsMinted BigInt  @default(0)
+  
+  // Índices
+  @@index([ownerWallet])
+  @@index([deviceType])
+  @@index([isVerified])
+}
+
+// Modelo de reporte de energía
+model EnergyReport {
+  id               String   @id @default(cuid())
+  reportId         String   @unique
+  deviceId         String
+  periodStart      DateTime
+  periodEnd        DateTime
+  energyWh         BigInt
+  verificationHash String
+  oracleSignature  String
+  blockchainTxId   String?  // ID de transacción en Solana
+  isCertified      Boolean  @default(false)
+  submissionDate   DateTime @default(now())
+  
+  // Relaciones
+  device Device @relation(fields: [deviceId], references: [deviceId])
+  recs   RECertificate[]
+  
+  // Índices
+  @@index([deviceId])
+  @@index([periodStart])
+  @@index([periodEnd])
+  @@index([isCertified])
+}
+
+// Modelo de certificado REC
+model RECertificate {
+  id               String   @id @default(cuid())
+  certificateId    String   @unique
+  ownerWallet      String
+  deviceId         String
+  energyReportId   String?
+  recAmount        BigInt
+  generationDate   DateTime @default(now())
+  expiryDate       DateTime
+  isRetired        Boolean  @default(false)
+  retirementReason String?
+  retirementDate   DateTime?
+  blockchainId     String?  // Referencia a cuenta Solana PDA
+  
+  // Relaciones
+  device       Device       @relation(fields: [deviceId], references: [deviceId])
+  energyReport EnergyReport? @relation(fields: [energyReportId], references: [id])
+  
+  // Índices
+  @@index([ownerWallet])
+  @@index([deviceId])
+  @@index([generationDate])
+  @@index([expiryDate])
+  @@index([isRetired])
+}
+
+// Modelo de usuario (para autenticación futura)
+model User {
+  id        String   @id @default(cuid())
+  wallet    String   @unique
+  email     String?  @unique
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relaciones
+  devices Device[]
+  
+  // Índices
+  @@index([wallet])
+  @@index([email])
+}
+
+// Modelo de auditoría (para tracking de operaciones)
+model AuditLog {
+  id          String   @id @default(cuid())
+  action      String
+  entityType  String
+  entityId    String
+  userId      String?
+  wallet      String?
+  details     Json?
+  ipAddress   String?
+  userAgent   String?
+  createdAt   DateTime @default(now())
+  
+  // Índices
+  @@index([action])
+  @@index([entityType])
+  @@index([entityId])
+  @@index([wallet])
+  @@index([createdAt])
+}

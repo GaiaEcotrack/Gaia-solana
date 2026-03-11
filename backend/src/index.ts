@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import dotenv from 'dotenv';
+import oracleRoutes from './routes/oracleRoutes';
 
 // Cargar variables de entorno
 dotenv.config();
@@ -47,6 +48,9 @@ app.get('/api/info', (req, res) => {
     });
 });
 
+// Rutas del oráculo
+app.use('/api/oracle', oracleRoutes);
+
 // Manejo de errores global
 app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
     console.error('Error:', err);
@@ -75,6 +79,9 @@ app.listen(PORT, () => {
   📊 Endpoints disponibles:
   - GET /health → Estado del servicio
   - GET /api/info → Información del proyecto
+  - POST /api/oracle/sign → Firmar reporte de energía
+  - POST /api/oracle/verify → Verificar firma
+  - GET /api/oracle/health → Salud del oráculo
   
   🔗 Próximos pasos:
   1. Configurar PostgreSQL: docker run -d --name gaia-postgres -p 5432:5432 -e POSTGRES_PASSWORD=password -e POSTGRES_DB=gaia_recs postgres:16

@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   keywords: ["Gaia", "Solana", "Renewable Energy", "Tokenization", "DePIN", "Climate Tech", "Web3"],
   authors: [{ name: "Gaia Ecotrack Team" }],
   icons: {
-    icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌱</text></svg>",
+    icon: "/logo.svg",
   },
   openGraph: {
     title: "Gaia Ecotrack",

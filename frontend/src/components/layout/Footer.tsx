@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Leaf, Github, Twitter, MessageCircle } from "lucide-react";
 
 export function Footer() {
+  const date = new Date();
   return (
     <motion.footer
       initial={{ opacity: 0 }}
@@ -18,7 +19,7 @@ export function Footer() {
               <Leaf className="w-4 h-4 text-white" />
             </div>
             <span className="text-sm text-[#6b6b6b]">
-              © 2024 Gaia Ecotrack. Built for Solana Hackathon.
+              © {date.getFullYear()} Gaia Ecotrack. Built for Solana Hackathon.
             </span>
           </div>
           <div className="flex items-center gap-4">

@@ -1,8 +1,9 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Sun, Leaf, Zap } from "lucide-react";
+import { Sun, Zap } from "lucide-react";
 import { WalletConnectButton } from "@/components/wallet/WalletConnectButton";
+import Image from "next/image";
 
 export function Navbar() {
   return (
@@ -21,8 +22,8 @@ export function Navbar() {
             transition={{ type: "spring", stiffness: 400 }}
           >
             <div className="relative">
-              <div className="w-10 h-10 bg-gradient-to-br from-[#F49136] to-[#F6B07D] rounded-xl flex items-center justify-center shadow-lg shadow-orange-200">
-                <Leaf className="w-6 h-6 text-white" />
+              <div className="">
+                <Image src="/logo.svg" alt="Gaia Logo" width={40} height={40} />
               </div>
               <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full border-2 border-white animate-pulse" />
             </div>

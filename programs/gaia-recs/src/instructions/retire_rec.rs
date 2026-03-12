@@ -88,7 +88,7 @@ pub fn handler(
     
     require!(
         !rec_certificate.is_retired,
-        ErrorCode::RECAlreadyRetired
+        ErrorCode::AlreadyRetired
     );
     
     // Verificar que el certificado no haya expirado
@@ -134,7 +134,7 @@ pub fn handler(
     
     // Convertir RECs a la cantidad de tokens
     let token_amount = amount
-        .checked_mul(10u64.pow(crate::REC_DECIMALS))
+        .checked_mul(10u64.pow(crate::REC_DECIMALS as u32))
         .ok_or(ErrorCode::ArithmeticOverflow)?;
     
     burn(cpi_ctx, token_amount)?;
@@ -202,7 +202,7 @@ pub fn mark_as_retired_handler(
     
     require!(
         !rec_certificate.is_retired,
-        ErrorCode::RECAlreadyRetired
+        ErrorCode::AlreadyRetired
     );
     
     // Obtener el timestamp actual

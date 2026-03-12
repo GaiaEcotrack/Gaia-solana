@@ -1,10 +1,6 @@
 use anchor_lang::prelude::*;
 use anchor_spl::{
-    token_2022::{
-        self, 
-        Token2022, 
-        transfer_hook,
-    },
+    token_2022::Token2022,
     token_interface::{
         Mint as MintInterface,
         TokenAccount as TokenAccountInterface,
@@ -68,17 +64,6 @@ pub struct TransferREC<'info> {
     // Programas necesarios
     pub system_program: Program<'info, System>,
     pub token_program: Program<'info, Token2022>,
-    
-    // Transfer Hook (obligatorio para Token-2022 con hooks)
-    /// CHECK: Transfer hook account
-    #[account(
-        constraint = transfer_hook::program::check_id(&transfer_hook_program.key())
-    )]
-    pub transfer_hook_program: UncheckedAccount<'info>,
-    
-    // Cuentas adicionales requeridas por el transfer hook
-    /// CHECK: Cuentas adicionales para el hook
-    pub extra_account_meta_list: UncheckedAccount<'info>,
 }
 
 pub fn handler(
@@ -113,7 +98,7 @@ pub fn handler(
     
     require!(
         !rec_certificate.is_retired,
-        ErrorCode::RECAlreadyRetired
+        ErrorCode::AlreadyRetired
     );
     
     // Verificar que el certificado no haya expirado
@@ -131,11 +116,11 @@ pub fn handler(
         ErrorCode::InsufficientRECs
     );
     
-    // Si se transfiere la cantidad completa, actualizar el dueño del certificado
+    // Si se transfiere la cantidad completa, actualizar el dueno del certificado
     if amount == rec_certificate.rec_amount {
         rec_certificate.owner = ctx.accounts.to.key();
     } else {
-        // Para transferencias parciales, necesitaríamos crear un nuevo certificado
+        // Para transferencias parciales, necesitariamos crear un nuevo certificado
         // Por ahora, solo permitimos transferencias completas
         return Err(ErrorCode::PartialTransferNotAllowed.into());
     }
@@ -180,7 +165,7 @@ pub fn handler(
     Ok(())
 }
 
-// Función de transfer hook que será llamada por el programa Token-2022
+// Struct para Transfer Hook (simplificado - sin hooks por ahora)
 #[derive(Accounts)]
 pub struct TransferHook<'info> {
     #[account(mut)]
@@ -190,41 +175,10 @@ pub struct TransferHook<'info> {
     #[account(mut)]
     /// CHECK: Cuenta de destino
     pub destination: UncheckedAccount<'info>,
-    
-    #[account(mut)]
-    /// CHECK: Cuenta de autoridad
-    pub authority: UncheckedAccount<'info>,
-    
-    #[account(mut)]
-    /// CHECK: Mint account
-    pub mint: UncheckedAccount<'info>,
-    
-    #[account(mut)]
-    /// CHECK: Cuenta de token de origen
-    pub source_token_account: UncheckedAccount<'info>,
-    
-    #[account(mut)]
-    /// CHECK: Cuenta de token de destino
-    pub destination_token_account: UncheckedAccount<'info>,
-    
-    // Certificado REC (si aplica)
-    /// CHECK: Certificado REC (opcional)
-    pub rec_certificate: Option<UncheckedAccount<'info>>,
-    
-    // Programa de tokens
-    /// CHECK: Token program
-    pub token_program: UncheckedAccount<'info>,
 }
 
-// Handler para el transfer hook
+// Handler para el transfer hook (simplificado)
 pub fn transfer_hook_handler(ctx: Context<TransferHook>, amount: u64) -> Result<()> {
-    // Esta función es llamada por el programa Token-2022 durante la transferencia
-    // Aquí podemos agregar lógica adicional de validación
-    
-    // Por ejemplo, verificar que el certificado no esté retirado
-    // o que la transferencia cumpla con ciertas reglas
-    
-    // Para el MVP, solo registramos la transferencia
     msg!(
         "Transfer hook ejecutado: Cantidad={}, De={}, Para={}",
         amount,

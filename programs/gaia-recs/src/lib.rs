@@ -1,37 +1,56 @@
 use anchor_lang::prelude::*;
-use anchor_spl::token_2022;
 
-// Importar módulos
 pub mod errors;
 pub mod events;
 pub mod instructions;
 pub mod state;
-pub mod utils;
 
-// Re-exportar instrucciones públicas
-pub use instructions::*;
+use instructions::*;
 
-// Constantes importantes
-pub const REC_CONVERSION_FACTOR: u64 = 1_000_000; // 1 REC = 1,000,000 Wh (1 MWh)
-pub const REC_DECIMALS: u8 = 6; // 6 decimales para fracciones de RECs
-pub const REC_EXPIRY_DAYS: i64 = 365 * 24 * 60 * 60; // 1 año en segundos
+// Program ID - Actualizar después del build con el ID real generado
+declare_id!("GAiA1111111111111111111111111111111111111111");
 
-// TODO: Actualizar con tu wallet address de administrador
-// Obtén tu address con: solana address
-pub const ADMIN_PUBKEY: Pubkey = pubkey!("4ojkYoX1uzf12i5qiX4gJs4hYkSBp2oAahCV3rrxy4fS");
+// ============================================================================
+// CONSTANTES DEL PROGRAMA
+// ============================================================================
 
-// Declarar el ID del programa
-declare_id!("GAIA_RECS_PROGRAM_ID");
+/// Clave pública del administrador/oráculo del sistema
+/// IMPORTANTE: Actualizar con la clave real en producción
+pub const ADMIN_PUBKEY: Pubkey = pubkey!("ADm1n11111111111111111111111111111111111111");
 
-// Módulo principal del programa
+/// Factor de conversión de Wh a RECs
+/// 1 REC = 1,000,000 Wh = 1 MWh
+pub const REC_CONVERSION_FACTOR: u64 = 1_000_000;
+
+/// Decimales para los tokens REC (Token-2022)
+pub const REC_DECIMALS: u8 = 6;
+
+/// Máximo de energía por reporte (1 GWh en Wh)
+pub const MAX_ENERGY_PER_REPORT: u64 = 1_000_000_000;
+
+/// Duración de validez de un REC en segundos (1 año)
+pub const REC_VALIDITY_PERIOD: i64 = 365 * 24 * 60 * 60;
+
+// ============================================================================
+// PROGRAMA PRINCIPAL GAIA RECs
+// ============================================================================
+
 #[program]
 pub mod gaia_recs {
     use super::*;
 
-    /// Registra un nuevo dispositivo de energía renovable
+    // ================= DISPOSITIVOS =================
+
+    /// Registra un nuevo dispositivo generador de energía renovable
+    /// 
+    /// # Argumentos
+    /// * `device_id` - Identificador único del dispositivo
+    /// * `device_type` - Tipo de dispositivo (solar, eólico, hidro, etc.)
+    /// * `capacity_kw` - Capacidad instalada en kW
+    /// * `location` - Ubicación/coordenadas del dispositivo
     pub fn register_device(
         ctx: Context<RegisterDevice>,
-        device_id: String,
+        _device_id: String,
         device_type: String,
         capacity_kw: u64,
         location: String,
@@ -39,7 +58,17 @@ pub mod gaia_recs {
         instructions::register_device::handler(ctx, device_id, device_type, capacity_kw, location)
     }
 
-    /// Envía un reporte de energía generada (requiere firma de oráculo)
+    // ================= REPORTES DE ENERGÍA =================
+
+    /// Envía un reporte de energía generada, verificado por el oráculo
+    /// 
+    /// # Argumentos
+    /// * `report_id` - ID único del reporte
+    /// * `period_start` - Inicio del período de generación (timestamp Unix)
+    /// * `period_end` - Fin del período de generación (timestamp Unix)
+    /// * `energy_wh` - Energía generada en Wh
+    /// * `verification_hash` - Hash de verificación
+    /// * `oracle_signature` - Firma del oráculo (64 bytes)
     pub fn submit_energy_report(
         ctx: Context<SubmitEnergyReport>,
         report_id: String,
@@ -60,31 +89,73 @@ pub mod gaia_recs {
         )
     }
 
-    /// Mina RECs basado en energía acumulada
+    // ================= MINT DE RECs =================
+
+    /// Mintea tokens REC basados en la energía acumulada del dispositivo
+    /// 
+    /// # Argumentos
+    /// * `certificate_id` - ID único del certificado REC
+    /// * `rec_amount` - Cantidad de RECs a mintear
+    /// * `device_id` - ID del dispositivo que genera los RECs
     pub fn mint_recs(
-        ctx: Context<MintRECs>,
+        ctx: Context<MintRecs>,
         certificate_id: String,
         rec_amount: u64,
+        _device_id: String,
     ) -> Result<()> {
-        instructions::mint_recs::handler(ctx, certificate_id, rec_amount)
+        instructions::mint_recs::handler(ctx, certificate_id, rec_amount, device_id)
     }
 
-    /// Transfiere RECs a otro usuario
-    /// Nota: El Transfer Hook de Token-2022 manejará verificación KYC
+    // ================= TRANSFERENCIA DE RECs =================
+
+    /// Transfiere RECs de una cuenta a otra usando Token-2022
+    /// 
+    /// # Argumentos
+    /// * `certificate_id` - ID del certificado asociado
+    /// * `amount` - Cantidad de RECs a transferir
+    /// * `decimals` - Decimales del token (debe ser REC_DECIMALS)
     pub fn transfer_rec(
         ctx: Context<TransferREC>,
         certificate_id: String,
-        new_owner: Pubkey,
+        amount: u64,
+        decimals: u8,
     ) -> Result<()> {
-        instructions::transfer_rec::handler(ctx, certificate_id, new_owner)
+        instructions::transfer_rec::handler(ctx, certificate_id, amount, decimals)
     }
 
-    /// Retira/consume RECs (para cumplimiento o uso)
+    /// Handler para el Transfer Hook de Token-2022
+    /// Se ejecuta automáticamente durante transferencias
+    pub fn transfer_hook(ctx: Context<TransferHook>, amount: u64) -> Result<()> {
+        instructions::transfer_rec::transfer_hook_handler(ctx, amount)
+    }
+
+    // ================= RETIRO DE RECs =================
+
+    /// Retira (consume) RECs, quemando los tokens asociados
+    /// 
+    /// # Argumentos
+    /// * `certificate_id` - ID del certificado a retirar
+    /// * `amount` - Cantidad de RECs a retirar
+    /// * `retirement_reason` - Razón del retiro
     pub fn retire_rec(
         ctx: Context<RetireREC>,
         certificate_id: String,
-        reason: String,
+        amount: u64,
+        retirement_reason: String,
     ) -> Result<()> {
-        instructions::retire_rec::handler(ctx, certificate_id, reason)
+        instructions::retire_rec::handler(ctx, certificate_id, amount, retirement_reason)
+    }
+
+    /// Marca un certificado como retirado sin quemar tokens (solo admin)
+    /// 
+    /// # Argumentos
+    /// * `certificate_id` - ID del certificado
+    /// * `retirement_reason` - Razón del retiro
+    pub fn mark_as_retired(
+        ctx: Context<MarkAsRetired>,
+        certificate_id: String,
+        retirement_reason: String,
+    ) -> Result<()> {
+        instructions::retire_rec::mark_as_retired_handler(ctx, certificate_id, retirement_reason)
     }
 }

@@ -91,7 +91,7 @@ impl RECertificate {
     pub fn retire(&mut self, reason: String, current_timestamp: i64) -> Result<()> {
         require!(
             !self.is_retired,
-            crate::errors::ErrorCode::RECAlreadyRetired
+            crate::errors::ErrorCode::AlreadyRetired
         );
         
         require!(

@@ -1,13 +1,7 @@
 use anchor_lang::prelude::*;
 use anchor_spl::{
     associated_token::AssociatedToken,
-    token_2022::{
-        self, 
-        Token2022, 
-        Mint, 
-        TokenAccount,
-        transfer_hook,
-    },
+    token_2022::{self, Token2022},
     token_interface::{
         Mint as MintInterface,
         TokenAccount as TokenAccountInterface,
@@ -19,7 +13,7 @@ use crate::events::RECsMinted;
 use crate::state::{Device, RECertificate};
 
 #[derive(Accounts)]
-#[instruction(certificate_id: String, rec_amount: u64)]
+#[instruction(certificate_id: String, rec_amount: u64, device_id: String)]
 pub struct MintRECs<'info> {
     #[account(mut)]
     pub device_owner: Signer<'info>,
@@ -29,7 +23,7 @@ pub struct MintRECs<'info> {
         seeds = [
             b"device",
             device_owner.key().as_ref(),
-            device.device_id.as_bytes()
+            device_id.as_bytes()
         ],
         bump = device.bump
     )]
@@ -86,20 +80,13 @@ pub struct MintRECs<'info> {
     pub system_program: Program<'info, System>,
     pub token_program: Program<'info, Token2022>,
     pub associated_token_program: Program<'info, AssociatedToken>,
-    
-    // Transfer Hook (opcional para Token-2022)
-    /// CHECK: Transfer hook account (optional)
-    #[account(
-        optional,
-        constraint = transfer_hook::program::check_id(&transfer_hook_program.key())
-    )]
-    pub transfer_hook_program: Option<UncheckedAccount<'info>>,
 }
 
 pub fn handler(
     ctx: Context<MintRECs>,
     certificate_id: String,
     rec_amount: u64,
+    _device_id: String,
 ) -> Result<()> {
     // Validar inputs
     require!(
@@ -112,7 +99,7 @@ pub fn handler(
         ErrorCode::InvalidEnergyAmount
     );
     
-    // Verificar que el dispositivo tenga suficiente energía acumulada
+    // Verificar que el dispositivo tenga suficiente energia acumulada
     let device = &mut ctx.accounts.device;
     
     require!(
@@ -120,7 +107,7 @@ pub fn handler(
         ErrorCode::InsufficientEnergy
     );
     
-    // Verificar que el dueño del dispositivo sea quien firma
+    // Verificar que el dueno del dispositivo sea quien firma
     require!(
         ctx.accounts.device_owner.key() == device.owner,
         ErrorCode::NotDeviceOwner
@@ -133,8 +120,8 @@ pub fn handler(
     let clock = Clock::get()?;
     let current_timestamp = clock.unix_timestamp;
     
-    // Calcular fecha de expiración (1 año desde ahora)
-    let expiry_date = current_timestamp + (365 * 24 * 60 * 60); // 1 año
+    // Calcular fecha de expiracion (1 ano desde ahora)
+    let expiry_date = current_timestamp + crate::REC_VALIDITY_PERIOD;
     
     // Inicializar el certificado REC
     let rec_certificate = &mut ctx.accounts.rec_certificate;
@@ -142,7 +129,7 @@ pub fn handler(
     rec_certificate.owner = ctx.accounts.device_owner.key();
     rec_certificate.certificate_id = certificate_id.clone();
     rec_certificate.device = device.key();
-    rec_certificate.energy_report = Pubkey::default(); // Opcional por ahora
+    rec_certificate.energy_report = Pubkey::default();
     rec_certificate.rec_amount = rec_amount;
     rec_certificate.generation_date = current_timestamp;
     rec_certificate.expiry_date = expiry_date;
@@ -155,7 +142,7 @@ pub fn handler(
     // Validar el certificado
     rec_certificate.validate()?;
     
-    // Actualizar las estadísticas del dispositivo
+    // Actualizar las estadisticas del dispositivo
     let energy_consumed = rec_amount * crate::REC_CONVERSION_FACTOR;
     device.energy_accumulator = device.energy_accumulator
         .checked_sub(energy_consumed)
@@ -168,7 +155,7 @@ pub fn handler(
     // Mint tokens usando CPI al programa Token-2022
     let mint_authority_bump = ctx.bumps.mint_authority;
     let mint_authority_seeds = &[
-        b"mint_authority",
+        b"mint_authority".as_ref(),
         &[mint_authority_bump],
     ];
     let signer_seeds = &[&mint_authority_seeds[..]];
@@ -187,7 +174,7 @@ pub fn handler(
     
     // Convertir RECs a la cantidad de tokens (considerando decimales)
     let token_amount = rec_amount
-        .checked_mul(10u64.pow(crate::REC_DECIMALS))
+        .checked_mul(10u64.pow(crate::REC_DECIMALS as u32))
         .ok_or(ErrorCode::ArithmeticOverflow)?;
     
     token_2022::mint_to(cpi_ctx, token_amount)?;
@@ -203,7 +190,7 @@ pub fn handler(
     });
     
     msg!(
-        "RECs minteados: Certificado={}, Cantidad={}, Dueño={}, Dispositivo={}",
+        "RECs minteados: Certificado={}, Cantidad={}, Dueno={}, Dispositivo={}",
         certificate_id,
         rec_amount,
         rec_certificate.owner,

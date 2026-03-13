@@ -1,14 +1,43 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Wifi, Server, Activity, Layers, Zap } from "lucide-react";
-import { mockSolanaNetwork } from "@/lib/blockchain-data";
+import { useConnection } from "@solana/wallet-adapter-react";
 
 export function SolanaNetworkCard() {
-  const network = mockSolanaNetwork;
-  const isConnected = network.connectionStatus === "connected";
+  const { connection } = useConnection();
+  
+  const [isConnected, setIsConnected] = useState(false);
+  const [currentSlot, setCurrentSlot] = useState<number>(0);
+  const [tps, setTps] = useState<number>(0);
+
+  useEffect(() => {
+    if (!connection) return;
+    setIsConnected(true);
+
+    const fetchStats = async () => {
+      try {
+        const slot = await connection.getSlot();
+        setCurrentSlot(slot);
+
+        const samples = await connection.getRecentPerformanceSamples(1);
+        if (samples.length > 0) {
+          const sample = samples[0];
+          setTps(Math.round(sample.numTransactions / sample.samplePeriodSecs));
+        }
+      } catch (e) {
+        console.error("Error fetching solana stats:", e);
+      }
+    };
+
+    fetchStats();
+    const intervalId = setInterval(fetchStats, 5000);
+    
+    return () => clearInterval(intervalId);
+  }, [connection]);
 
   return (
     <motion.div
@@ -44,7 +73,7 @@ export function SolanaNetworkCard() {
               <span>Network</span>
             </div>
             <Badge className="bg-[#066EB5]/10 text-[#066EB5] border-0 font-medium">
-              {network.network}
+              Solana Devnet
             </Badge>
           </div>
 
@@ -64,7 +93,7 @@ export function SolanaNetworkCard() {
               <span>Current Slot</span>
             </div>
             <span className="text-sm font-semibold text-[#1a1a1a]">
-              {network.currentSlot.toLocaleString()}
+              {currentSlot > 0 ? currentSlot.toLocaleString() : "Loading..."}
             </span>
           </div>
 
@@ -74,7 +103,7 @@ export function SolanaNetworkCard() {
               <span>TPS</span>
             </div>
             <span className="text-sm font-semibold text-[#F49136]">
-              {network.tps.toLocaleString()}
+              {tps > 0 ? tps.toLocaleString() : "Loading..."}
             </span>
           </div>
 

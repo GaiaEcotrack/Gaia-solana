@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -11,19 +12,19 @@ interface ProjectCardProps {
   index: number;
 }
 
-const deviceIcons = {
+const deviceIcons: Record<Project["deviceType"], typeof Sun> = {
   solar: Sun,
   wind: Wind,
   hydro: Droplets,
 };
 
-const deviceColors = {
+const deviceColors: Record<Project["deviceType"], string> = {
   solar: "text-[#F49136] bg-[#F49136]/10",
   wind: "text-[#066EB5] bg-[#066EB5]/10",
   hydro: "text-[#904907] bg-[#904907]/10",
 };
 
-export function ProjectCard({ project, index }: ProjectCardProps) {
+export const ProjectCard = memo(function ProjectCard({ project, index }: ProjectCardProps) {
   const DeviceIcon = deviceIcons[project.deviceType];
   const colorClass = deviceColors[project.deviceType];
 
@@ -106,4 +107,4 @@ export function ProjectCard({ project, index }: ProjectCardProps) {
       </Card>
     </motion.div>
   );
-}
+});

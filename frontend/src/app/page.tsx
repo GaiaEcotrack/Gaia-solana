@@ -1,16 +1,21 @@
 "use client";
 
 import { motion } from "framer-motion";
+import dynamic from "next/dynamic";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { ConnectedProjectCard } from "@/components/cards/ConnectedProjectCard";
 import { EnergyCard } from "@/components/cards/EnergyCard";
 import { TokenCard } from "@/components/cards/TokenCard";
-import { ProjectsMapSection } from "@/components/sections/ProjectsMapSection";
 import { DeviceInfo } from "@/components/sections/DeviceInfo";
 import { SolanaIntegration } from "@/components/sections/SolanaIntegration";
 import { Sparkles, TrendingUp, Users } from "lucide-react";
 import { useProjects } from "@/hooks/useProjects";
+
+const ProjectsMapSection = dynamic(
+  () => import("@/components/sections/ProjectsMapSection").then((mod) => mod.ProjectsMapSection),
+  { ssr: false, loading: () => <div className="h-[500px] animate-pulse bg-gray-100 rounded-2xl" /> }
+);
 
 function StatBadge({ icon: Icon, label, value, color }: { icon: React.ElementType; label: string; value: string; color: string }) {
   return (
@@ -28,7 +33,7 @@ function StatBadge({ icon: Icon, label, value, color }: { icon: React.ElementTyp
 }
 
 export default function Dashboard() {
-  const { getTotalKwh, getTotalTokens, projects } = useProjects();
+  const { totalKwh, totalTokens, projects, isLoading } = useProjects();
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -55,19 +60,19 @@ export default function Dashboard() {
               <StatBadge
                 icon={TrendingUp}
                 label="Total kWh"
-                value={getTotalKwh().toLocaleString()}
+                value={isLoading ? "..." : totalKwh.toLocaleString()}
                 color="bg-[#F49136]"
               />
               <StatBadge
                 icon={Sparkles}
                 label="Tokens"
-                value={`${getTotalTokens().toLocaleString()} GAI`}
+                value={isLoading ? "..." : `${totalTokens.toLocaleString()} GAI`}
                 color="bg-[#066EB5]"
               />
               <StatBadge
                 icon={Users}
                 label="Proyectos"
-                value={`${projects.length} Activos`}
+                value={isLoading ? "..." : `${projects.length} Activos`}
                 color="bg-[#904907]"
               />
             </div>
@@ -114,12 +119,12 @@ export default function Dashboard() {
               </div>
               <div className="w-px h-10 bg-white/20 hidden md:block" />
               <div className="text-center">
-                <p className="text-2xl font-bold">{getTotalKwh().toLocaleString()}</p>
+                <p className="text-2xl font-bold">{isLoading ? "..." : totalKwh.toLocaleString()}</p>
                 <p className="text-xs text-white/70">Total kWh</p>
               </div>
               <div className="w-px h-10 bg-white/20 hidden md:block" />
               <div className="text-center">
-                <p className="text-2xl font-bold">{projects.length}</p>
+                <p className="text-2xl font-bold">{isLoading ? "..." : projects.length}</p>
                 <p className="text-xs text-white/70">Proyectos</p>
               </div>
               <div className="w-px h-10 bg-white/20 hidden md:block" />

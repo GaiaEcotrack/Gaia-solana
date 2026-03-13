@@ -1,0 +1,1563 @@
+{
+  "address": "3h66uneMsNnnByaSTSFBhz6S69ZATHbRhriFq8KaWDwP",
+  "metadata": {
+    "name": "gaia_solana",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Gaia Protocol - Energy and Carbon Credit Tokenization on Solana"
+  },
+  "instructions": [
+    {
+      "name": "add_admin",
+      "discriminator": [
+        177,
+        236,
+        33,
+        205,
+        124,
+        152,
+        55,
+        186
+      ],
+      "accounts": [
+        {
+          "name": "config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "owner",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "admin_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  97,
+                  100,
+                  109,
+                  105,
+                  110
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "new_admin"
+              }
+            ]
+          }
+        },
+        {
+          "name": "new_admin"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "add_device",
+      "discriminator": [
+        21,
+        27,
+        66,
+        42,
+        18,
+        30,
+        14,
+        18
+      ],
+      "accounts": [
+        {
+          "name": "config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "device",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  101,
+                  118,
+                  105,
+                  99,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "owner"
+              },
+              {
+                "kind": "arg",
+                "path": "serial_number"
+              }
+            ]
+          }
+        },
+        {
+          "name": "owner"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "owner",
+          "type": "pubkey"
+        },
+        {
+          "name": "serial_number",
+          "type": "string"
+        },
+        {
+          "name": "location",
+          "type": "string"
+        },
+        {
+          "name": "device_type",
+          "type": "string"
+        },
+        {
+          "name": "device_brand",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "initialize",
+      "discriminator": [
+        175,
+        175,
+        109,
+        31,
+        13,
+        152,
+        155,
+        237
+      ],
+      "accounts": [
+        {
+          "name": "config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "mint_tokens_to_user",
+      "discriminator": [
+        85,
+        150,
+        103,
+        133,
+        240,
+        87,
+        44,
+        73
+      ],
+      "accounts": [
+        {
+          "name": "config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "vft_mint",
+          "writable": true
+        },
+        {
+          "name": "recipient"
+        },
+        {
+          "name": "recipient_token_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "recipient"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "vft_mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "energy_production",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  110,
+                  101,
+                  114,
+                  103,
+                  121,
+                  95,
+                  112,
+                  114,
+                  111,
+                  100,
+                  117,
+                  99,
+                  116,
+                  105,
+                  111,
+                  110
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "recipient"
+              }
+            ]
+          }
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "associated_token_program",
+          "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "remove_admin",
+      "discriminator": [
+        74,
+        202,
+        71,
+        106,
+        252,
+        31,
+        72,
+        183
+      ],
+      "accounts": [
+        {
+          "name": "config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "owner",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "admin_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  97,
+                  100,
+                  109,
+                  105,
+                  110
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "admin_to_remove"
+              }
+            ]
+          }
+        },
+        {
+          "name": "admin_to_remove",
+          "docs": [
+            "CHECK"
+          ]
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "set_vft_contract",
+      "discriminator": [
+        80,
+        78,
+        4,
+        1,
+        84,
+        246,
+        31,
+        209
+      ],
+      "accounts": [
+        {
+          "name": "config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "owner",
+          "signer": true
+        },
+        {
+          "name": "vft_mint"
+        }
+      ],
+      "args": [
+        {
+          "name": "vft_mint",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
+      "name": "tokenize_carbon_credit",
+      "discriminator": [
+        255,
+        50,
+        199,
+        117,
+        201,
+        199,
+        233,
+        86
+      ],
+      "accounts": [
+        {
+          "name": "config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "carbon_mint",
+          "writable": true
+        },
+        {
+          "name": "recipient"
+        },
+        {
+          "name": "recipient_token_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "recipient"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "carbon_mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "carbon_credit",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  97,
+                  114,
+                  98,
+                  111,
+                  110,
+                  95,
+                  99,
+                  114,
+                  101,
+                  100,
+                  105,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "config.next_token_id",
+                "account": "Config"
+              }
+            ]
+          }
+        },
+        {
+          "name": "used_hash",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  117,
+                  115,
+                  101,
+                  100,
+                  95,
+                  104,
+                  97,
+                  115,
+                  104
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "certificate_hash"
+              }
+            ]
+          }
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "associated_token_program",
+          "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "project_id",
+          "type": "string"
+        },
+        {
+          "name": "co2_tonnes",
+          "type": "u32"
+        },
+        {
+          "name": "certificate_hash",
+          "type": "string"
+        },
+        {
+          "name": "verifier_name",
+          "type": "string"
+        },
+        {
+          "name": "gps_coords",
+          "type": "string"
+        },
+        {
+          "name": "recipient",
+          "type": "pubkey"
+        },
+        {
+          "name": "start_date",
+          "type": "i64"
+        },
+        {
+          "name": "end_date",
+          "type": "i64"
+        }
+      ]
+    },
+    {
+      "name": "transfer_gaia_e_tokens",
+      "discriminator": [
+        69,
+        240,
+        147,
+        16,
+        81,
+        80,
+        209,
+        239
+      ],
+      "accounts": [
+        {
+          "name": "config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "vft_mint",
+          "writable": true
+        },
+        {
+          "name": "from",
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "to",
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "from_token_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "from"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "vft_mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "to_token_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "to"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "vft_mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "transfer_record",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  116,
+                  114,
+                  97,
+                  110,
+                  115,
+                  102,
+                  101,
+                  114,
+                  95,
+                  114,
+                  101,
+                  99,
+                  111,
+                  114,
+                  100
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "from"
+              },
+              {
+                "kind": "account",
+                "path": "to"
+              }
+            ]
+          }
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "associated_token_program",
+          "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "Admin",
+      "discriminator": [
+        244,
+        158,
+        220,
+        65,
+        8,
+        73,
+        4,
+        65
+      ]
+    },
+    {
+      "name": "CarbonCredit",
+      "discriminator": [
+        251,
+        244,
+        7,
+        102,
+        128,
+        170,
+        160,
+        112
+      ]
+    },
+    {
+      "name": "Config",
+      "discriminator": [
+        155,
+        12,
+        170,
+        224,
+        30,
+        250,
+        204,
+        130
+      ]
+    },
+    {
+      "name": "Device",
+      "discriminator": [
+        153,
+        248,
+        23,
+        39,
+        83,
+        45,
+        68,
+        128
+      ]
+    },
+    {
+      "name": "EnergyProduction",
+      "discriminator": [
+        129,
+        201,
+        194,
+        83,
+        80,
+        188,
+        4,
+        183
+      ]
+    },
+    {
+      "name": "TransferRecord",
+      "discriminator": [
+        200,
+        31,
+        6,
+        158,
+        240,
+        25,
+        248,
+        53
+      ]
+    },
+    {
+      "name": "UsedHash",
+      "discriminator": [
+        210,
+        146,
+        208,
+        32,
+        76,
+        150,
+        180,
+        169
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "OnlyOwner",
+      "msg": "Only owner can perform this action"
+    },
+    {
+      "code": 6001,
+      "name": "OnlyOwnerOrAdmin",
+      "msg": "Only owner or admin can perform this action"
+    },
+    {
+      "code": 6002,
+      "name": "AdminExists",
+      "msg": "Admin already exists"
+    },
+    {
+      "code": 6003,
+      "name": "AdminNotFound",
+      "msg": "Admin not found"
+    },
+    {
+      "code": 6004,
+      "name": "AdminListExceeded",
+      "msg": "Admin list exceeded"
+    },
+    {
+      "code": 6005,
+      "name": "VftContractNotSet",
+      "msg": "VFT contract ID not set"
+    },
+    {
+      "code": 6006,
+      "name": "CompanyTokenNotSet",
+      "msg": "Company token contract ID not set"
+    },
+    {
+      "code": 6007,
+      "name": "CarbonTokenNotSet",
+      "msg": "Carbon token contract ID not set"
+    },
+    {
+      "code": 6008,
+      "name": "InvalidAmount",
+      "msg": "Invalid amount"
+    },
+    {
+      "code": 6009,
+      "name": "InvalidSerialNumber",
+      "msg": "Invalid serial number"
+    },
+    {
+      "code": 6010,
+      "name": "InvalidLocation",
+      "msg": "Invalid location"
+    },
+    {
+      "code": 6011,
+      "name": "InvalidDeviceType",
+      "msg": "Invalid device type"
+    },
+    {
+      "code": 6012,
+      "name": "InvalidDeviceBrand",
+      "msg": "Invalid device brand"
+    },
+    {
+      "code": 6013,
+      "name": "DeviceAlreadyExists",
+      "msg": "Device already exists"
+    },
+    {
+      "code": 6014,
+      "name": "CertificateAlreadyExists",
+      "msg": "Certificate already exists"
+    },
+    {
+      "code": 6015,
+      "name": "InvalidCertificateId",
+      "msg": "Invalid certificate ID"
+    },
+    {
+      "code": 6016,
+      "name": "InvalidDates",
+      "msg": "Invalid dates"
+    },
+    {
+      "code": 6017,
+      "name": "InsufficientBalance",
+      "msg": "Insufficient balance"
+    },
+    {
+      "code": 6018,
+      "name": "CalculationOverflow",
+      "msg": "Calculation overflow"
+    },
+    {
+      "code": 6019,
+      "name": "InvalidTimeRange",
+      "msg": "Invalid time range"
+    },
+    {
+      "code": 6020,
+      "name": "CooldownPeriodActive",
+      "msg": "Cooldown period active"
+    },
+    {
+      "code": 6021,
+      "name": "ConversionLimitExceeded",
+      "msg": "Conversion limit exceeded"
+    },
+    {
+      "code": 6022,
+      "name": "InvalidConversionCooldown",
+      "msg": "Invalid conversion cooldown"
+    },
+    {
+      "code": 6023,
+      "name": "InvalidPropertyValue",
+      "msg": "Invalid property value"
+    },
+    {
+      "code": 6024,
+      "name": "InvalidMintAmount",
+      "msg": "Invalid mint amount"
+    },
+    {
+      "code": 6025,
+      "name": "TimeRangeTooLarge",
+      "msg": "Time range too large"
+    },
+    {
+      "code": 6026,
+      "name": "TooManyEntriesProcessed",
+      "msg": "Too many entries processed"
+    },
+    {
+      "code": 6027,
+      "name": "InvalidContractId",
+      "msg": "Invalid contract ID"
+    },
+    {
+      "code": 6028,
+      "name": "AmountExceedsLimit",
+      "msg": "Amount exceeds limit"
+    },
+    {
+      "code": 6029,
+      "name": "SelfTransferAttempted",
+      "msg": "Self transfer attempted"
+    },
+    {
+      "code": 6030,
+      "name": "ExceededTransferLimit",
+      "msg": "Exceeded transfer limit"
+    },
+    {
+      "code": 6031,
+      "name": "TransferCooldownActive",
+      "msg": "Transfer cooldown active"
+    },
+    {
+      "code": 6032,
+      "name": "ExceededMintingLimit",
+      "msg": "Exceeded minting limit"
+    },
+    {
+      "code": 6033,
+      "name": "TransferFailed",
+      "msg": "Transfer failed"
+    },
+    {
+      "code": 6034,
+      "name": "BalanceCheckFailed",
+      "msg": "Balance check failed"
+    },
+    {
+      "code": 6035,
+      "name": "ApprovalFailed",
+      "msg": "Approval failed"
+    },
+    {
+      "code": 6036,
+      "name": "CertificateHashAlreadyUsed",
+      "msg": "Certificate hash already used"
+    },
+    {
+      "code": 6037,
+      "name": "CarbonCreditNotFound",
+      "msg": "Carbon credit not found"
+    },
+    {
+      "code": 6038,
+      "name": "InvalidTokenAmount",
+      "msg": "Invalid token amount"
+    }
+  ],
+  "types": [
+    {
+      "name": "Admin",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "address",
+            "type": "pubkey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "CarbonCredit",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "token_id",
+            "type": "u32"
+          },
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "project_id",
+            "type": "string"
+          },
+          {
+            "name": "co2_tonnes",
+            "type": "u32"
+          },
+          {
+            "name": "certificate_hash",
+            "type": "string"
+          },
+          {
+            "name": "verifier_name",
+            "type": "string"
+          },
+          {
+            "name": "gps_coords",
+            "type": "string"
+          },
+          {
+            "name": "start_date",
+            "type": "i64"
+          },
+          {
+            "name": "end_date",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Config",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "vft_mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "company_mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "carbon_mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "gaia_e_to_gaia_rate",
+            "type": "u64"
+          },
+          {
+            "name": "min_conversion_amount",
+            "type": "u64"
+          },
+          {
+            "name": "max_daily_conversion",
+            "type": "u64"
+          },
+          {
+            "name": "min_gaia_e_transfer",
+            "type": "u64"
+          },
+          {
+            "name": "max_gaia_e_per_kwh",
+            "type": "u64"
+          },
+          {
+            "name": "conversion_cooldown",
+            "type": "i64"
+          },
+          {
+            "name": "kwh_per_token",
+            "type": "u64"
+          },
+          {
+            "name": "tokens_per_sol",
+            "type": "u64"
+          },
+          {
+            "name": "conversion_rate_vft_to_company",
+            "type": "u64"
+          },
+          {
+            "name": "total_vft_swapped",
+            "type": "u64"
+          },
+          {
+            "name": "total_company_tokens_sent",
+            "type": "u64"
+          },
+          {
+            "name": "next_token_id",
+            "type": "u32"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Device",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "serial_number",
+            "type": "string"
+          },
+          {
+            "name": "location",
+            "type": "string"
+          },
+          {
+            "name": "device_type",
+            "type": "string"
+          },
+          {
+            "name": "device_brand",
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "name": "EnergyProduction",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "producer",
+            "type": "pubkey"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          },
+          {
+            "name": "kwh_generated",
+            "type": "u64"
+          },
+          {
+            "name": "gaia_e_minted",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "TransferRecord",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "from",
+            "type": "pubkey"
+          },
+          {
+            "name": "to",
+            "type": "pubkey"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          },
+          {
+            "name": "token_type",
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "name": "UsedHash",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "hash",
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ]
+}

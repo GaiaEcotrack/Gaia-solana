@@ -4,12 +4,42 @@ import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Coins, Hash, FileCode, ExternalLink, Copy, Check } from "lucide-react";
-import { mockTokenMint } from "@/lib/blockchain-data";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useConnection } from "@solana/wallet-adapter-react";
+import { PublicKey } from "@solana/web3.js";
+
+const PROGRAM_ID_STR = "3h66uneMsNnnByaSTSFBhz6S69ZATHbRhriFq8KaWDwP";
+const VFT_MINT_PUBKEY_STR = "EVrNjUkZCKvouQ16Qi6hVhYZwgGaYQ4sZTkTWtScVZdF";
 
 export function TokenMintCard() {
+  const { connection } = useConnection();
   const [copied, setCopied] = useState<string | null>(null);
-  const tokenMint = mockTokenMint;
+  const [totalMinted, setTotalMinted] = useState("0");
+  const [latestSig, setLatestSig] = useState("Loading...");
+
+  useEffect(() => {
+    if (!connection) return;
+
+    const fetchData = async () => {
+      try {
+        const supply = await connection.getTokenSupply(new PublicKey(VFT_MINT_PUBKEY_STR));
+        setTotalMinted(supply.value.uiAmountString || "0");
+
+        const sigs = await connection.getSignaturesForAddress(new PublicKey(VFT_MINT_PUBKEY_STR), { limit: 1 });
+        if (sigs.length > 0) {
+          setLatestSig(sigs[0].signature);
+        } else {
+          setLatestSig("No transactions yet");
+        }
+      } catch (e) {
+        console.error("Error fetching mint details:", e);
+      }
+    };
+
+    fetchData();
+    const intervalId = setInterval(fetchData, 10000);
+    return () => clearInterval(intervalId);
+  }, [connection]);
 
   const copyToClipboard = (text: string, field: string) => {
     navigator.clipboard.writeText(text);
@@ -18,6 +48,7 @@ export function TokenMintCard() {
   };
 
   const truncateSignature = (sig: string) => {
+    if (sig === "Loading..." || sig === "No transactions yet") return sig;
     return `${sig.slice(0, 8)}...${sig.slice(-8)}`;
   };
 
@@ -46,10 +77,10 @@ export function TokenMintCard() {
             <p className="text-xs text-[#6b6b6b] mb-1">Total Tokens Minted</p>
             <div className="flex items-baseline justify-center gap-2">
               <span className="text-3xl font-bold text-[#F49136]">
-                {tokenMint.totalMinted.toLocaleString()}
+                {totalMinted}
               </span>
               <span className="text-xl font-semibold text-[#904907]">
-                {tokenMint.tokenSymbol}
+                GAI
               </span>
             </div>
           </div>
@@ -59,7 +90,7 @@ export function TokenMintCard() {
             <div className="flex items-center justify-between">
               <span className="text-xs text-[#6b6b6b]">Latest Mint TX</span>
               <button
-                onClick={() => copyToClipboard(tokenMint.latestTransaction, "tx")}
+                onClick={() => copyToClipboard(latestSig, "tx")}
                 className="flex items-center gap-1 text-xs text-[#066EB5] hover:text-[#055a9a]"
               >
                 {copied === "tx" ? (
@@ -70,7 +101,7 @@ export function TokenMintCard() {
               </button>
             </div>
             <code className="block bg-[#066EB5]/5 px-3 py-2 rounded-lg text-xs font-mono text-[#066EB5] truncate">
-              {truncateSignature(tokenMint.latestTransaction)}
+              {truncateSignature(latestSig)}
             </code>
           </div>
 
@@ -82,7 +113,7 @@ export function TokenMintCard() {
                 Token Mint Address
               </span>
               <button
-                onClick={() => copyToClipboard(tokenMint.tokenMintAddress, "mint")}
+                onClick={() => copyToClipboard(VFT_MINT_PUBKEY_STR, "mint")}
                 className="flex items-center gap-1 text-xs text-[#066EB5] hover:text-[#055a9a]"
               >
                 {copied === "mint" ? (
@@ -93,7 +124,7 @@ export function TokenMintCard() {
               </button>
             </div>
             <code className="block bg-[#F6F3EC] px-3 py-2 rounded-lg text-xs font-mono text-[#904907] truncate">
-              {tokenMint.tokenMintAddress}
+              {VFT_MINT_PUBKEY_STR}
             </code>
           </div>
 
@@ -105,7 +136,7 @@ export function TokenMintCard() {
                 Program ID
               </span>
               <button
-                onClick={() => copyToClipboard(tokenMint.programId, "program")}
+                onClick={() => copyToClipboard(PROGRAM_ID_STR, "program")}
                 className="flex items-center gap-1 text-xs text-[#066EB5] hover:text-[#055a9a]"
               >
                 {copied === "program" ? (
@@ -116,7 +147,7 @@ export function TokenMintCard() {
               </button>
             </div>
             <code className="block bg-[#F6F3EC] px-3 py-2 rounded-lg text-xs font-mono text-[#904907] truncate">
-              {tokenMint.programId}
+              {PROGRAM_ID_STR}
             </code>
           </div>
 
@@ -126,7 +157,7 @@ export function TokenMintCard() {
             className="w-full bg-[#066EB5] hover:bg-[#055a9a] text-white"
           >
             <a
-              href={`https://explorer.solana.com/address/${tokenMint.tokenMintAddress}?cluster=devnet`}
+              href={`https://explorer.solana.com/address/${VFT_MINT_PUBKEY_STR}?cluster=devnet`}
               target="_blank"
               rel="noopener noreferrer"
             >

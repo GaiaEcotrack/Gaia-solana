@@ -4,6 +4,7 @@ import { ThrottlerModule } from '@nestjs/throttler';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { OracleModule } from './oracle/oracle.module';
+import { SolanaModule } from './solana/solana.module';
 import { ConfigModule as AppConfigModule } from './config/config.module';
 
 @Module({
@@ -20,8 +21,9 @@ import { ConfigModule as AppConfigModule } from './config/config.module';
     ]),
     AppConfigModule,
     OracleModule,
+    SolanaModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }

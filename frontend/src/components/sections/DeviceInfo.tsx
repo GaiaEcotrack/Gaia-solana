@@ -29,7 +29,7 @@ export function DeviceInfo() {
     { label: "Device Type", value: mockDeviceInfo.deviceType, highlight: false },
     { label: "Manufacturer", value: mockDeviceInfo.manufacturer, highlight: false },
     { label: "Current Power Output", value: `${mockDeviceInfo.currentPowerOutput} kW`, highlight: true },
-    { label: "Total Lifetime kWh", value: mockDeviceInfo.totalLifetimeKwh.toLocaleString(), highlight: true },
+    { label: "Total Lifetime kWh", value: String(mockDeviceInfo.totalLifetimeKwh), highlight: true },
     { label: "Firmware Version", value: mockDeviceInfo.firmwareVersion, highlight: false },
     { label: "Installation Date", value: mockDeviceInfo.installationDate, highlight: false },
     { label: "Last Data Update", value: mockDeviceInfo.lastDataUpdate, highlight: false },

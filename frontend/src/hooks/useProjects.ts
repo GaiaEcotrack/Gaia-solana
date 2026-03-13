@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { mockProjects, type Project } from "@/lib/mock-data";
 
 export function useProjects() {
@@ -8,37 +8,29 @@ export function useProjects() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate API fetch
     const timer = setTimeout(() => {
       setProjects(mockProjects);
       setIsLoading(false);
     }, 800);
-
     return () => clearTimeout(timer);
   }, []);
 
-  const getProjectById = (id: string): Project | undefined => {
-    return projects.find((p) => p.id === id);
-  };
-
-  const getOnlineProjects = (): Project[] => {
-    return projects.filter((p) => p.status === "online");
-  };
-
-  const getTotalKwh = (): number => {
+  const totalKwh = useMemo(() => {
     return projects.reduce((sum, p) => sum + p.kwhGenerated, 0);
-  };
+  }, [projects]);
 
-  const getTotalTokens = (): number => {
+  const totalTokens = useMemo(() => {
     return projects.reduce((sum, p) => sum + p.tokensMinted, 0);
-  };
+  }, [projects]);
 
   return {
     projects,
     isLoading,
-    getProjectById,
-    getOnlineProjects,
-    getTotalKwh,
-    getTotalTokens,
+    getProjectById: (id: string) => projects.find((p) => p.id === id),
+    getOnlineProjects: () => projects.filter((p) => p.status === "online"),
+    getTotalKwh: () => totalKwh,
+    getTotalTokens: () => totalTokens,
+    totalKwh,
+    totalTokens,
   };
 }

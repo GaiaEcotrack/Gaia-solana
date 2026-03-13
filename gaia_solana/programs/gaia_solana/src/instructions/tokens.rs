@@ -34,7 +34,7 @@ pub struct MintTokensToUser<'info> {
     pub recipient_token_account: Account<'info, TokenAccount>,
 
     #[account(
-        init,
+        init_if_needed,
         payer = authority,
         space = 8 + 64,
         seeds = [b"energy_production", recipient.key().as_ref()],

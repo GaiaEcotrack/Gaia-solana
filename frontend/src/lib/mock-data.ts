@@ -41,8 +41,8 @@ export const mockEnergyData: EnergyData = {
   deviceId: "GAIA-001",
   project: "Parque Solar La Guajira",
   location: "La Guajira, Colombia",
-  kwhGenerated: 1250,
-  tokensMinted: 1250,
+  kwhGenerated: 15,
+  tokensMinted: 15,
   status: "online",
 };
 
@@ -202,7 +202,7 @@ export const mockDeviceInfo: DeviceInfo = {
 };
 
 export const generateMockLiveData = (): { kwh: number; output: number } => {
-  const kwh = Math.floor(2450 + Math.random() * 10);
-  const output = parseFloat((145 + Math.random() * 5).toFixed(1));
+  const kwh = Math.floor(15 + Math.random() * 10);
+  const output = parseFloat((15 + Math.random() * 5).toFixed(1));
   return { kwh, output };
 };

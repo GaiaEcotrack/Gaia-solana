@@ -1,6 +1,8 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { Connection, PublicKey, Transaction, SystemProgram, Keypair } from '@solana/web3.js';
 import * as anchor from '@coral-xyz/anchor';
+import * as fs from 'fs';
+import * as path from 'path';
 // import { IdlGaiaContrato } from './gaia_solana.json';
 
 @Injectable()
@@ -86,7 +88,8 @@ export class SolanaService implements OnModuleInit {
       // Importar IDL para generar la build nativamente
       // NestJS copia los archivos .json a dist/ si están bien configurados, 
       // pero para asegurar la ruta absoluta en dev usamos path.resolve temporalmente o el require directo correcto:
-      const idl = require('../../../src/solana/gaia_solana.json');
+      const idlPath = path.join(__dirname, 'gaia_solana.json');
+const idl = JSON.parse(fs.readFileSync(idlPath, 'utf8'));
       const provider = new anchor.AnchorProvider(this.connection, {} as anchor.Wallet, {});
       const program = new anchor.Program(idl, provider);
 

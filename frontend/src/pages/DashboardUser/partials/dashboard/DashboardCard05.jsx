@@ -1,0 +1,25 @@
+import React from 'react';
+
+
+// Import utilities
+
+
+function DashboardCard05() {
+
+
+
+  return (
+    <div className="flex flex-col col-span-full sm:col-span-6 bg-white  shadow-lg rounded-sm border border-slate-200 ">
+      <h2 className='text-black text-3xl'>How to create a wallet</h2>
+   <video class="h-full w-full rounded-lg" controls>
+      <source
+        src="/Tutorial.mp4"
+        type="video/mp4"
+      />
+      Your browser does not support the video tag.
+    </video>
+    </div>
+  );
+}
+
+export default DashboardCard05;

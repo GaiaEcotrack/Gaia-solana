@@ -1,0 +1,18 @@
+# Rust/Cargo
+/target/
+!/target/deploy/*.so
+
+# Solana/Anchor
+**/*.json
+!Anchor.toml
+!Cargo.toml
+!package.json
+!tsconfig.json
+
+# Keys (Específico para evitar accidentes)
+*-keypair.json
+id.json
+
+# OS
+.DS_Store
+node_modules/

@@ -9,9 +9,8 @@ skip-lint = false
 gaia_recs = "7HBPoHbjU84v8vXa5rrn4QHK1fp94TpPZbrwUUHw2n98"
 
 [provider]
-cluster = "localnet"
-wallet = "~/.config/solana/id.json"
-
+cluster = "https://api.devnet.solana.com"
+wallet = "~/.config/solana/temp-keypair.json"
 [scripts]
 test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 \"tests/**/*.ts\""
 

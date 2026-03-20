@@ -14,7 +14,7 @@ use crate::state::{Device, RECertificate};
 
 #[derive(Accounts)]
 #[instruction(certificate_id: String, rec_amount: u64, device_id: String)]
-pub struct MintRECs<'info> {
+pub struct MintRecs<'info> {
     #[account(mut)]
     pub device_owner: Signer<'info>,
     
@@ -83,7 +83,7 @@ pub struct MintRECs<'info> {
 }
 
 pub fn handler(
-    ctx: Context<MintRECs>,
+    ctx: Context<MintRecs>,
     certificate_id: String,
     rec_amount: u64,
     _device_id: String,

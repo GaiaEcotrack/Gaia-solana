@@ -1,32 +1,33 @@
-[provider]
-cluster = "devnet"
-wallet = "/home/ilich/.config/solana/id.json"
+[toolchain]
+
+[features]
+resolution = true
+skip-lint = false
 
 [programs.devnet]
-gaia_recs = "11111111111111111111111111111111"
-
-[scripts]
-test = "yarn run mocha -t 1000000 tests/**/*.ts"
-lint = "cargo fmt --all && cargo clippy --all-targets --all-features -- -D warnings"
-build = "anchor build"
-deploy = "anchor deploy"
-verify = "anchor verify"
+gaia_recs = "Cbi1bCczmVzuRc87YoGBhdiepZfiBkypM3J91PAp26YY"
 
 [registry]
 url = "https://anchor.projectserum.com"
 
-[features]
-seeds = false
-skip-lint = false
+[provider]
+cluster = "devnet"
+wallet = "/home/nicov/.config/solana/temp-keypair.json"
+
+[scripts]
+build = "anchor build"
+deploy = "anchor deploy"
+lint = "cargo fmt --all && cargo clippy --all-targets --all-features -- -D warnings"
+test = "yarn run mocha -t 1000000 tests/**/*.ts"
+verify = "anchor verify"
 
 [test]
-skip-deploy = false
-skip-local-validator = false
-skip-build = false
+startup_wait = 5000
+shutdown_wait = 2000
+upgradeable = false
 
 [test.validator]
+bind_address = "0.0.0.0"
 url = "https://api.devnet.solana.com"
-commitment = "confirmed"
-websocket = "wss://api.devnet.solana.com"
-disable-blockhash-caching = false
-preflight-commitment = "confirmed"
+ledger = ".anchor/test-ledger"
+rpc_port = 8899

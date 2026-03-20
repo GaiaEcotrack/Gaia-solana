@@ -5,10 +5,14 @@ pub mod events;
 pub mod instructions;
 pub mod state;
 
-use instructions::*;
+use instructions::register_device::*;
+use instructions::submit_report::*;
+use instructions::mint_recs::*;
+use instructions::transfer_rec::*;
+use instructions::retire_rec::*;
 
 // Program ID - Actualizar después del build con el ID real generado
-declare_id!("GAiA1111111111111111111111111111111111111111");
+declare_id!("Cbi1bCczmVzuRc87YoGBhdiepZfiBkypM3J91PAp26YY");
 
 // ============================================================================
 // CONSTANTES DEL PROGRAMA
@@ -50,7 +54,7 @@ pub mod gaia_recs {
     /// * `location` - Ubicación/coordenadas del dispositivo
     pub fn register_device(
         ctx: Context<RegisterDevice>,
-        _device_id: String,
+        device_id: String,
         device_type: String,
         capacity_kw: u64,
         location: String,
@@ -101,7 +105,7 @@ pub mod gaia_recs {
         ctx: Context<MintRecs>,
         certificate_id: String,
         rec_amount: u64,
-        _device_id: String,
+        device_id: String,
     ) -> Result<()> {
         instructions::mint_recs::handler(ctx, certificate_id, rec_amount, device_id)
     }
